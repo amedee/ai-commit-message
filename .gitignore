@@ -1,1 +1,5 @@
 !dist/index.js
+*.iml
+.idea/
+dist/101.index.js
+node_modules/
