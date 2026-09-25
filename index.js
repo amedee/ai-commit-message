@@ -148,6 +148,11 @@ async function run() {
   const promptMessage = core.getInput("prompt_content");
   const token = process.env.OPENROUTER_API_KEY;
 
+  if (!promptMessage) {
+    core.setFailed("❌ prompt_content input is empty");
+    return;
+  }
+
   if (!token) {
     core.setFailed("❌ OPENROUTER_API_KEY is not set");
     return;
