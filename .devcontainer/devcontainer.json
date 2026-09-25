@@ -1,0 +1,6 @@
+{
+  "name": "AI Commit Message Generator",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24",
+
+  "postCreateCommand": "npm ci"
+}
