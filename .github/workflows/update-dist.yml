@@ -1,0 +1,59 @@
+---
+name: Update generated bundle
+
+on: # yamllint disable-line rule:truthy
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  update-dist:
+    name: Update dist/index.js
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 1
+
+      - name: Download generated bundle
+        uses: actions/download-artifact@v7
+        with:
+          name: dist-${{ github.event.workflow_run.id }}
+          path: dist
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Update generated bundle
+        env:
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- dist/index.js; then
+            echo "dist/index.js is already up to date"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add dist/index.js
+          git commit -m "🤖 chore: update generated action bundle"
+
+          echo "Pushing generated bundle to $BRANCH..."
+
+          git push origin "HEAD:$BRANCH"

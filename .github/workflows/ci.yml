@@ -30,4 +30,14 @@ jobs:
         run: npm run build
 
       - name: Check for uncommitted changes
+        if: github.event_name != 'pull_request'
         run: git diff --exit-code -- dist/
+
+      - name: Upload generated bundle
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist-${{ github.run_id }}
+          path: dist/index.js
+          if-no-files-found: error
+          retention-days: 1
