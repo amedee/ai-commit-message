@@ -1,6 +1,9 @@
 ---
-name: "AI Commit Message Generator"
-description: "Generate concise AI-powered git commit message"
+name: "OpenRouter AI Commit Message Generator"
+description: "Generate concise AI-powered git commit messages using OpenRouter"
+branding:
+  icon: git-commit
+  color: purple
 
 inputs:
   diff_content:
